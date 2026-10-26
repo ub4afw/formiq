@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>formiq — брелки на заказ из 3D-печати</title>
+  <meta name="description" content="formiq — индивидуальные 3D-брелки: свои формы, гравировка, тиражи для бизнеса.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===================== ШАПКА ===================== -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#home" class="logo">formiq<span class="logo__dot">.</span></a>
+
+      <nav class="nav" id="nav">
+        <a href="#home" class="nav__link">Главная</a>
+        <a href="#catalog" class="nav__link">Каталог</a>
+        <a href="#calculator" class="nav__link">Калькулятор</a>
+        <a href="#contacts" class="nav__link">Контакты</a>
+      </nav>
+
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="home">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="hero__eyebrow">3D-печать · брелки на заказ</p>
+          <h1 class="hero__title">Твоя идея.<br>Твоя форма.<br><span class="accent">Твой брелок.</span></h1>
+          <p class="hero__subtitle">
+            Печатаем фирменные брелки, мини-кары и фигурки под ключ:
+            от одного штуки до партий для бизнеса. Срок — от 24 часов.
+          </p>
+          <div class="hero__buttons">
+            <a href="#catalog" class="btn btn--primary">Каталог</a>
+            <a href="#calculator" class="btn btn--ghost">Рассчитать стоимость</a>
+          </div>
+          <div class="hero__stats">
+            <div class="stat"><span class="stat__num accent">24ч</span><span class="stat__label">срочная печать</span></div>
+            <div class="stat"><span class="stat__num accent">3</span><span class="stat__label">материала на выбор</span></div>
+            <div class="stat"><span class="stat__num accent">−30%</span><span class="stat__label">скидка от 50 шт</span></div>
+          </div>
+        </div>
+
+        <!-- 3D-сцена: при ошибке загрузки сюда появится CSS-заглушка -->
+        <div class="hero__3d" id="hero-3d">
+          <canvas id="three-canvas"></canvas>
+
+          <!-- Стилизованная заглушка (показывается, если WebGL/модель недоступны) -->
+          <div class="model-fallback hidden" id="model-fallback" aria-hidden="true">
+            <svg viewBox="0 0 240 160" class="model-fallback__svg">
+              <ellipse cx="120" cy="140" rx="80" ry="10" fill="#c6ff00" opacity=".12"/>
+              <path d="M30 100 L210 100 L185 130 Q120 145 55 130 Z" fill="#2a2a2a" stroke="#3a3a3a" stroke-width="2"/>
+              <rect x="85" y="55" width="70" height="45" rx="8" fill="#333" stroke="#444" stroke-width="2"/>
+              <rect x="100" y="68" width="18" height="18" rx="4" fill="#0a0a0a" stroke="#c6ff00" stroke-width="2"/>
+              <rect x="130" y="68" width="18" height="18" rx="4" fill="#0a0a0a" stroke="#c6ff00" stroke-width="2"/>
+              <rect x="145" y="25" width="16" height="35" rx="5" fill="#3a3a3a"/>
+              <circle cx="70" cy="115" r="7" fill="#0a0a0a" stroke="#c6ff00" stroke-width="2"/>
+              <circle cx="170" cy="115" r="7" fill="#0a0a0a" stroke="#c6ff00" stroke-width="2"/>
+            </svg>
+            <p class="model-fallback__text">3D-превью пока недоступно —<br>но брелки мы печатаем настоящие</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== КАТАЛОГ ===================== -->
+    <section class="section" id="catalog">
+      <div class="container">
+        <h2 class="section__title">Каталог</h2>
+        <p class="section__subtitle">Готовые формы — изменим цвет, размер и добавим гравировку под тебя.</p>
+
+        <div class="filters" id="filters">
+          <button class="filter active" data-category="all">Все</button>
+          <button class="filter" data-category="figure">Фигурки</button>
+          <button class="filter" data-category="name">Именные</button>
+          <button class="filter" data-category="car">Мини-кары</button>
+          <button class="filter" data-category="logo">Под логотип</button>
+        </div>
+
+        <div class="catalog" id="catalog-grid"><!-- карточки рендерит JS --></div>
+      </div>
+    </section>
+
+    <!-- ===================== КАЛЬКУЛЯТОР ===================== -->
+    <section class="section section--alt" id="calculator">
+      <div class="container">
+        <h2 class="section__title">Калькулятор стоимости</h2>
+        <p class="section__subtitle">Подберите параметры — цена пересчитывается мгновенно.</p>
+
+        <div class="calc">
+          <div class="calc__controls">
+
+            <div class="calc__row">
+              <label class="calc__label" for="calc-type">Тип брелка</label>
+              <select id="calc-type" class="input"></select>
+            </div>
+
+            <div class="calc__row">
+              <span class="calc__label">Размер</span>
+              <div class="segmented" id="calc-size">
+                <button class="segment active" data-value="S">S · 3 см</button>
+                <button class="segment" data-value="M">M · 5 см</button>
+                <button class="segment" data-value="L">L · 7 см</button>
+              </div>
+            </div>
+
+            <div class="calc__row">
+              <span class="calc__label">Материал</span>
+              <div class="segmented" id="calc-material">
+                <button class="segment active" data-value="PLA">PLA</button>
+                <button class="segment" data-value="PETG">PETG</button>
+              </div>
+            </div>
+
+            <div class="calc__row">
+              <label class="calc__label" for="calc-qty">Количество, шт</label>
+              <input type="number" id="calc-qty" class="input" min="1" max="10000" value="10">
+              <p class="calc__hint" id="qty-hint">От 10 шт — скидка 12%, от 50 шт — 30%</p>
+            </div>
+
+            <div class="calc__row">
+              <span class="calc__label">Персонализация</span>
+              <div class="checkbox-list" id="calc-options">
+                <label class="checkbox"><input type="checkbox" data-option="engrave"><span>Гравировка текста</span></label>
+                <label class="checkbox"><input type="checkbox" data-option="text2"><span>Текст с двух сторон</span></label>
+                <label class="checkbox"><input type="checkbox" data-option="paint"><span>Ручная раскраска</span></label>
+              </div>
+            </div>
+
+            <div class="calc__row">
+              <span class="calc__label">Срочность</span>
+              <div class="segmented" id="calc-urgency">
+                <button class="segment active" data-value="standard">3–5 дней</button>
+                <button class="segment" data-value="express">24 часа</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="calc__result">
+            <p class="calc__result-label">Итого</p>
+            <p class="calc__total"><span id="calc-total">0</span>&nbsp;₽</p>
+            <p class="calc__per-unit"><span id="calc-per-unit">0</span> ₽ за 1 шт</p>
+            <div class="calc__breakdown" id="calc-breakdown"></div>
+            <a href="#contacts" class="btn btn--primary btn--block">Заказать по этой цене</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== КОНТАКТЫ ===================== -->
+    <section class="section" id="contacts">
+      <div class="container">
+        <h2 class="section__title">Контакты</h2>
+        <p class="section__subtitle">Ответим в течение часа, обсудим макет и запустим печать.</p>
+
+        <div class="contacts">
+          <div class="contacts__info">
+            <a class="contact-card" href="tel:+79990000000">
+              <span class="contact-card__icon">☎</span>
+              <span><b>+7 (999) 000-00-00</b><br><small>звонок и WhatsApp</small></span>
+            </a>
+            <a class="contact-card" href="https://t.me/formiq3d" target="_blank" rel="noopener">
+              <span class="contact-card__icon">✈</span>
+              <span><b>@formiq3d</b><br><small>Telegram — быстрее всего</small></span>
+            </a>
+            <a class="contact-card" href="mailto:hi@formiq.ru">
+              <span class="contact-card__icon">✉</span>
+              <span><b>hi@formiq.ru</b><br><small>почта для макетов</small></span>
+            </a>
+          </div>
+
+          <form class="contacts__form" id="contact-form">
+            <h3 class="contacts__form-title">Написать нам</h3>
+            <input type="text" class="input" placeholder="Ваше имя" required>
+            <input type="text" class="input" placeholder="Телефон или @telegram" required>
+            <textarea class="input" rows="4" placeholder="Что хотите напечатать?" required></textarea>
+            <button type="submit" class="btn btn--primary btn--block">Отправить</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== ФУТЕР ===================== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a href="#home" class="logo">formiq<span class="logo__dot">.</span></a>
+      <p class="footer__copy">© 2026 formiq. 3D-печать брелков на заказ.</p>
+    </div>
+  </footer>
+
+  <!-- ===================== МОДАЛКА ЗАКАЗА ===================== -->
+  <div class="modal hidden" id="order-modal">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__dialog">
+      <button class="modal__close" data-close aria-label="Закрыть">×</button>
+
+      <div id="order-form-view">
+        <h3 class="modal__title">Заказ: <span id="order-product" class="accent"></span></h3>
+        <form id="order-form">
+          <input type="text" class="input" placeholder="Ваше имя" required>
+          <input type="text" class="input" placeholder="Телефон или @telegram" required>
+          <input type="number" class="input" placeholder="Количество, шт" min="1" value="1">
+          <textarea class="input" rows="3" placeholder="Комментарий (цвет, гравировка…)"></textarea>
+          <button type="submit" class="btn btn--primary btn--block">Отправить заказ</button>
+        </form>
+      </div>
+
+      <div id="order-success-view" class="hidden">
+        <h3 class="modal__title">Заявка принята <span class="accent">✓</span></h3>
+        <p class="modal__text">Свяжемся с вами в течение часа и подтвердим детали.</p>
+        <button class="btn btn--ghost btn--block" data-close>Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Уведомление -->
+  <div class="toast hidden" id="toast">Сообщение отправлено — спасибо!</div>
+
+  <!-- Three.js (классические сборки — работают при открытии файла напрямую) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
